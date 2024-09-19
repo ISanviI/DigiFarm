@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-    <div> Welcome to Plant and Animal Disease Classification. </div>
+    <div id="welcome"> <marquee><h2> Welcome to Plant and Animal Disease Classification Portal! </h2></marquee></div>
     </>
   );
 }
