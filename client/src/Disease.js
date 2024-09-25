@@ -53,7 +53,7 @@ function Disease() {
       <div> <h3>Upload your image file below to predict disease - 👇</h3></div>
       <form onSubmit={(e) => handleUpload(e)}>
         <input type="file" class="btn btn-outline-light" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
-        <button type="submit" class="btn btn-outline-success" id="upload"> Upload </button>
+        <button type="submit" class="btn btn-outline-success" id="upload"> upload </button>
       </form>
     </>
   );
