@@ -5,7 +5,7 @@ import axios from "axios";
 function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
-  const baseURL = "http://localhost:8000"
+  const baseURL = "http://localhost:7000"
 
   const postFile = async (image) => {
     try {
@@ -19,9 +19,6 @@ function Disease() {
       console.log(`Response - ${response}`)
     } catch (error) {
       console.error(`Axios Error occured - ${error}`);
-      console.error(`Axios Error message - ${error.message}`);
-      console.error(`Axios Error response - ${error.response.data}`);
-      console.error(`Axios Error request - ${error.request}`);
     }
   };
   
