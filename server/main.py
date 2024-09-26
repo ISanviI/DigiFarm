@@ -7,12 +7,15 @@ import uvicorn
 from PIL import Image
 import numpy as np
 import tensorflow as tf
+import joblib
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 # Installed pymon - similar to nodemon -> pymon {pythonfile.py}
 
-load_dotenv()
-PORT = os.getenv('PORT')
+class_names = ['Pepper_bell__Healthy', 'Potato__Early_blight', 'Potato__Late_blight', 'Tomato__Bacterial_spot', 'Tomato__Healthy']
+
+# load_dotenv()
+# PORT = os.getenv('PORT')
 
 app = FastAPI()
 
@@ -25,58 +28,57 @@ app.add_middleware(
 )
 
 cwd = os.path.dirname(os.path.abspath(__file__))
-plantModel = tf.keras.models.load_model(f"{cwd}/models/plant_model.h5")
-# animalModel = tf.keras.models.load_model(f"{cwd}/models/animal_model.h5")
-# Model.compiled_metrics =  NONE #tf.keras.metrics.load_metrics
+with open(f"{cwd}/models/model.pkl", "rb") as f:
+  plantModel = joblib.load(f)
+# plantModel = tf.keras.models.load_model(f"{cwd}/models/plant_model.h5")
 
 @app.get("/")
 async def ping():
   return "Welcome to DigiFarm"
-  # return "Website running on 8000"
 
 def read_file_as_image(data) -> np.ndarray:
-  print("Data address = ", io.BytesIO(data))
-  imgarr = np.array(Image.open(io.BytesIO(data)))
-  # print("Img Array = ", imgarr)
-  return imgarr
+  try:
+
+    path = io.BytesIO(data)
+    print("Data address = ", path)
+
+    try:
+      img = Image.open(io.BytesIO(data))
+    except Exception as e:
+      return {"error": "Invalid image file", "details": str(e)}
+    
+    imgResize = img.resize((256, 256))
+    imgarr = np.array(imgResize)
+    if (len(imgarr.shape) == 3 and imgarr.shape[2] == 3):
+      img_expand = np.expand_dims(imgarr, axis=0)
+    print("Expanded Img Array = ", img_expand)
+    return img_expand
+  
+  except Exception as e:
+    raise FileExistsError(f"Error reading image - {e}")
+  # img_resized = tf.keras.preprocessing.image.load_img(path, target_size=(256, 256))
+  # imgarr = tf.keras.preprocessing.image.img_to_array(img_resized)
 
 # @app.post("/animal")
 # async def predict(
 #   file:UploadFile = File(...)
 #   ):
-#   imgarr = read_file_as_image(await file.read())
-#   img_batch = np.expand_dims(imgarr, axis=0)
-#   img_process = img_batch.astype('float32')/255
-#   prediction = animalModel.predict(img_process)
-#   prediction_class = np.argmax(prediction, axis=1)[0]
-#   print("Prediction class - ", prediction_class)
-#   return prediction_class
 
 @app.post("/plant")
-async def predict(
-  file:UploadFile = File(...)
-  ):
-  imgarr = read_file_as_image(await file.read())
-  # print("Image Array List - ", imgarr.tolist())
-
-  img_batch = np.expand_dims(imgarr, axis=0)
-  # print("Image batch - ", img_batch.tolist())
-
-  img_process = img_batch.astype('float32')/255
-  # print("Processed Image batch - ", img_batch.tolist())
-
-  prediction = plantModel.predict(img_process)
-  # print("Prediction - ", prediction)
-
-  # prediction_class = np.argmax(prediction, axis=0)
-  # print("Prediction class axis 0 - ", prediction_class)
-
-  # prediction_class = np.argmax(prediction, axis=1)
-  # print("Prediction class axis 1 - ", prediction_class)
-
-  prediction_class = np.argmax(prediction, axis=1)[0]
-  print("Prediction class - ", prediction_class)
-  return prediction_class
+async def predict(file:UploadFile = File(...)):
+  try:
+    imgarr = read_file_as_image(await file.read())
+    # if imgarr.shape != (256, 256, 3):
+    #     raise ValueError(f"Image shape is incorrect. Expected (256, 256, 3), but got {imgarr.shape}")
+    predictions = plantModel.predict(imgarr)
+    prediction_class = class_names[np.argmax(predictions[0])]
+    confidence = round(100*(np.max(predictions[0])), 2)
+    print("Prediction class - ", prediction_class)
+    print("Confidence - ", confidence)
+    return {"Prediction" : prediction_class,
+            "Confidence" : confidence}
+  except Exception as e:
+    return {"error": "Prediction failed", "details": str(e)}
   
   # content = await file.read()
   # print(content)
@@ -88,5 +90,5 @@ async def predict(
   # print(await file.read())
 
 if __name__ == "__main__":
-  uvicorn.run(app, host="localhost", port=PORT)
+  uvicorn.run(app, host="localhost", port=7000)
   

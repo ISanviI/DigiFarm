@@ -11,7 +11,7 @@ function NavBar() {
       <Link to="/animal"> <div className='navElement'> Animals </div> </Link> */
       <ul class="nav nav-tabs">
       <li class="nav-item">
-        <Link to="/"><a class="nav-link active" aria-current="page" href="#">Logo</a> </Link>
+        <Link to="/"><a class="nav-link" aria-current="page" href="#">Home</a> </Link>
       </li>
       <li class="nav-item">
         <Link to="/plant"><a class="nav-link" href="#" id="plants">Plants</a></Link>

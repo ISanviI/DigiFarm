@@ -5,23 +5,23 @@ import axios from "axios";
 function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
-  const baseURL = "http://localhost:8000"
+  const [predict_class, setClass] = useState("Result")
+  const baseURL = "http://localhost:7000"
 
-  const postFile = async (image) => {
+  const postFile = async (File) => {
     try {
       const URL = `${baseURL}/${type}`
       console.log(`URL - ${URL}`)
-      const response = await axios.post(URL, image, {
+      const response = await axios.post(URL, File, {
         method: "POST",
         headers: { "content-type": "multipart/form-data" },
       });
+      const data = JSON.stringify(response);
+      setClass(data)
       console.log("File uploaded successfully!")
       console.log(`Response - ${response}`)
     } catch (error) {
       console.error(`Axios Error occured - ${error}`);
-      console.error(`Axios Error message - ${error.message}`);
-      console.error(`Axios Error response - ${error.response.data}`);
-      console.error(`Axios Error request - ${error.request}`);
     }
   };
   
@@ -50,10 +50,11 @@ function Disease() {
   return (
     <>
       <div id="classify"> <h2>{type.toUpperCase()} Disease Classification </h2></div>
-      <div> <h3>Upload your image file below to predict disease - 👇</h3></div>
+      <div id="msg"> <h3>Upload your image file below to predict disease - 👇</h3></div>
       <form onSubmit={(e) => handleUpload(e)}>
-        <input type="file" class="btn btn-outline-light" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
-        <button type="submit" class="btn btn-outline-success" id="upload"> upload </button>
+        <input type="file" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
+        <button type="submit" id="upload"> Upload </button>
+        
       </form>
     </>
   );
