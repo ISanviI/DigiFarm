@@ -53,11 +53,11 @@ function Disease() {
 
   return (
     <>
-      <div> {type.toUpperCase()} Disease Classification </div>
-      <div>Upload your image file below to predict disease - 👇</div>
+      <div id="classify"> <h2>{type.toUpperCase()} Disease Classification </h2></div>
+      <div id="msg"> <h3>Upload your image file below to predict disease - 👇</h3></div>
       <form onSubmit={(e) => handleUpload(e)}>
-        <input type="file" onChange={(e) => handleFileChange(e)} />
-        <button type="submit"> Upload </button>
+        <input type="file" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
+        <button type="submit" id="upload"> Upload </button>
         <input type="text" value={predict_class} readOnly/>
         <input type="text" value={confidence} readOnly/>
       </form>

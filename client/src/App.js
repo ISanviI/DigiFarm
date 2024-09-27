@@ -5,7 +5,18 @@ function App() {
 
   return (
     <>
-    <div> Welcome to Plant and Animal Disease Classification. </div>
+
+<div id="content-above-navbar">
+<div id="header"><h1> DigiFarm </h1></div>
+</div>
+    
+
+    <div id="content-below-navbar"> <div id="welcome"> 
+    <marquee scrollamount="15" scrolldelay="50"><h1> Welcome to Plant and Animal Disease Classification Portal! </h1></marquee>
+</div>
+</div>
+
+    
     </>
   );
 }
