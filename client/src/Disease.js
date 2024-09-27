@@ -8,11 +8,12 @@ function Disease() {
   const [predict_class, setClass] = useState("Result")
   const baseURL = "http://localhost:7000"
 
-  const postFile = async (File) => {
+  const postFile = async (formData) => {
     try {
       const URL = `${baseURL}/${type}`
       console.log(`URL - ${URL}`)
-      const response = await axios.post(URL, File, {
+      console.log(`formData - ${formData}`)
+      const response = await axios.post(URL, formData, {
         method: "POST",
         headers: { "content-type": "multipart/form-data" },
       });
@@ -21,7 +22,7 @@ function Disease() {
       console.log("File uploaded successfully!")
       console.log(`Response - ${response}`)
     } catch (error) {
-      console.error(`Axios Error occured - ${error}`);
+      console.error(`Axios Error occured - ${error.response}`);
     }
   };
   
@@ -39,10 +40,11 @@ function Disease() {
       } else {
         const formdata = new FormData();
         formdata.append("file", file);
-        await postFile(file);
+        console.log(`formData - ${formdata}`)
+        await postFile(formdata);
       }
     } catch (error) {
-      console.error(`Error in handling upload - ${error}`)
+      console.error(`Error in handling upload - ${error.response}`)
       console.error(`Error while uploading - ${error.message}`);
     }
   };
