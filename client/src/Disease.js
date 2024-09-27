@@ -6,6 +6,7 @@ function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
   const [predict_class, setClass] = useState("Result")
+  const [confidence, setConfidence] = useState("---")
   const baseURL = "http://localhost:7000"
 
   const postFile = async (formData) => {
@@ -17,10 +18,11 @@ function Disease() {
         method: "POST",
         headers: { "content-type": "multipart/form-data" },
       });
+      setClass(response.Prediction)
+      setConfidence(response.Confidence)
       const data = JSON.stringify(response);
-      setClass(data)
       console.log("File uploaded successfully!")
-      console.log(`Response - ${response}`)
+      console.log(`Response - ${data}`)
     } catch (error) {
       console.error(`Axios Error occured - ${error.response}`);
     }
@@ -57,6 +59,7 @@ function Disease() {
         <input type="file" onChange={(e) => handleFileChange(e)} />
         <button type="submit"> Upload </button>
         <input type="text" value={predict_class} readOnly/>
+        <input type="text" value={confidence} readOnly/>
       </form>
     </>
   );
