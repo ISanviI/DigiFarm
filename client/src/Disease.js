@@ -18,8 +18,8 @@ function Disease() {
         method: "POST",
         headers: { "content-type": "multipart/form-data" },
       });
-      setClass(response.Prediction)
-      setConfidence(response.Confidence)
+      setClass(response.data.Prediction)
+      setConfidence(response.data.Confidence)
       const data = JSON.stringify(response);
       console.log("File uploaded successfully!")
       console.log(`Response - ${data}`)
