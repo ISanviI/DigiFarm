@@ -6,7 +6,7 @@ function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
   const [predict_class, setClass] = useState("Result")
-  const [confidence, setConfidence] = useState("---")
+  const [confidence, setConfidence] = useState("Accuracy")
   const baseURL = "http://localhost:7000"
 
   const postFile = async (formData) => {
@@ -27,10 +27,18 @@ function Disease() {
       console.error(`Axios Error occured - ${error.response}`);
     }
   };
+
+  useEffect(() => {
+    windows.location.reload();
+  }, [type])
   
   const handleFileChange = (e) => {
     e.preventDefault();
     setFile(e.target.files[0]);
+    if (!file) {
+      setClass("Prediction Result")
+      setConfidence("Accuracy")
+    }
   };
   
   const handleUpload = async (e) => {
