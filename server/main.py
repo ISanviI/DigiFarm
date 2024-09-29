@@ -12,8 +12,6 @@ from fastapi.middleware.cors import CORSMiddleware
 # from dotenv import load_dotenv
 # Installed pymon - similar to nodemon -> pymon {pythonfile.py}
 
-class_names = ['Pepper_bell__Healthy', 'Potato__Early_blight', 'Potato__Late_blight', 'Tomato__Bacterial_spot', 'Tomato__Healthy']
-
 # load_dotenv()
 # PORT = os.getenv('PORT')
 
@@ -26,6 +24,9 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"]
 )
+
+plantClasses = ['Pepper_bell__Healthy', 'Potato__Early_blight', 'Potato__Late_blight', 'Tomato__Bacterial_spot', 'Tomato__Healthy']
+animalClasses = ['Lumpy_Skin', 'Normal_Skin']
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 with open(f"{cwd}/models/plantModel.pkl", "rb") as p:
@@ -68,7 +69,7 @@ async def predict(
     # if imgarr.shape != (256, 256, 3):
     #     raise ValueError(f"Image shape is incorrect. Expected (256, 256, 3), but got {imgarr.shape}")
     predictions = animalModel.predict(imgarr)
-    prediction_class = class_names[np.argmax(predictions[0])]
+    prediction_class = animalClasses[np.argmax(predictions[0])]
     confidence = round(100*(np.max(predictions[0])), 2)
     print("Prediction class - ", prediction_class)
     print("Confidence - ", confidence)
@@ -84,7 +85,7 @@ async def predict(file:UploadFile = File(...)):
     # if imgarr.shape != (256, 256, 3):
     #     raise ValueError(f"Image shape is incorrect. Expected (256, 256, 3), but got {imgarr.shape}")
     predictions = plantModel.predict(imgarr)
-    prediction_class = class_names[np.argmax(predictions[0])]
+    prediction_class = plantClasses[np.argmax(predictions[0])]
     confidence = round(100*(np.max(predictions[0])), 2)
     print("Prediction class - ", prediction_class)
     print("Confidence - ", confidence)
