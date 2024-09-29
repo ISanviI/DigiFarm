@@ -28,9 +28,9 @@ function Disease() {
     }
   };
 
-  useEffect(() => {
-    windows.location.reload();
-  }, [type])
+  // useEffect(() => {
+  //   window.location.reload();
+  // }, [type])
   
   const handleFileChange = (e) => {
     e.preventDefault();
