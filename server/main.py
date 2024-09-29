@@ -9,11 +9,11 @@ import numpy as np
 import tensorflow as tf
 import joblib
 from fastapi.middleware.cors import CORSMiddleware
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 # Installed pymon - similar to nodemon -> pymon {pythonfile.py}
 
-# load_dotenv()
-# PORT = os.getenv('PORT')
+load_dotenv()
+PORT = int(os.getenv('PORT'))
 
 app = FastAPI()
 
@@ -33,7 +33,6 @@ with open(f"{cwd}/models/plantModel.pkl", "rb") as p:
   plantModel = joblib.load(p)
 with open(f"{cwd}/models/animalModel.pkl", "rb") as a:
   animalModel = joblib.load(a)
-# plantModel = tf.keras.models.load_model(f"{cwd}/models/plant_model.h5")
 
 @app.get("/")
 async def ping():
@@ -53,7 +52,6 @@ def read_file_as_image(data) -> np.ndarray:
     imgarr = np.array(imgResize)
     if (len(imgarr.shape) == 3 and imgarr.shape[2] == 3):
       img_expand = np.expand_dims(imgarr, axis=0)
-    print("Expanded Img Array = ", img_expand)
     return img_expand
   
   except Exception as e:
@@ -66,8 +64,6 @@ async def predict(
   file:UploadFile = File(...)):
   try:
     imgarr = read_file_as_image(await file.read())
-    # if imgarr.shape != (256, 256, 3):
-    #     raise ValueError(f"Image shape is incorrect. Expected (256, 256, 3), but got {imgarr.shape}")
     predictions = animalModel.predict(imgarr)
     prediction_class = animalClasses[np.argmax(predictions[0])]
     confidence = round(100*(np.max(predictions[0])), 2)
@@ -104,5 +100,4 @@ async def predict(file:UploadFile = File(...)):
   # print(await file.read())
 
 if __name__ == "__main__":
-  uvicorn.run(app, host="localhost", port=7000)
-  
+  uvicorn.run(app, host="localhost", port=PORT)

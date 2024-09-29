@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
 function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
+  const fileRef = useRef(null);
   const [predict_class, setClass] = useState("Result")
   const [confidence, setConfidence] = useState("Accuracy")
   const baseURL = "http://localhost:7000"
@@ -13,7 +14,6 @@ function Disease() {
     try {
       const URL = `${baseURL}/${type}`
       console.log(`URL - ${URL}`)
-      console.log(`formData - ${formData}`)
       const response = await axios.post(URL, formData, {
         method: "POST",
         headers: { "content-type": "multipart/form-data" },
@@ -28,15 +28,18 @@ function Disease() {
     }
   };
 
-  // useEffect(() => {
-  //   window.location.reload();
-  // }, [type])
+  useEffect(() => {
+    if (fileRef.current) {
+      fileRef.current.value = null;
+      setFile(null);
+    }
+  }, [type])
   
   const handleFileChange = (e) => {
     e.preventDefault();
     setFile(e.target.files[0]);
     if (!file) {
-      setClass("Prediction Result")
+      setClass("Result")
       setConfidence("Accuracy")
     }
   };
@@ -50,7 +53,6 @@ function Disease() {
       } else {
         const formdata = new FormData();
         formdata.append("file", file);
-        console.log(`formData - ${formdata}`)
         await postFile(formdata);
       }
     } catch (error) {
