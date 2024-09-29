@@ -28,8 +28,10 @@ app.add_middleware(
 )
 
 cwd = os.path.dirname(os.path.abspath(__file__))
-with open(f"{cwd}/models/model.pkl", "rb") as f:
-  plantModel = joblib.load(f)
+with open(f"{cwd}/models/plantModel.pkl", "rb") as p:
+  plantModel = joblib.load(p)
+with open(f"{cwd}/models/animalModel.pkl", "rb") as a:
+  animalModel = joblib.load(a)
 # plantModel = tf.keras.models.load_model(f"{cwd}/models/plant_model.h5")
 
 @app.get("/")
@@ -38,7 +40,6 @@ async def ping():
 
 def read_file_as_image(data) -> np.ndarray:
   try:
-
     path = io.BytesIO(data)
     print("Data address = ", path)
 
@@ -59,10 +60,22 @@ def read_file_as_image(data) -> np.ndarray:
   # img_resized = tf.keras.preprocessing.image.load_img(path, target_size=(256, 256))
   # imgarr = tf.keras.preprocessing.image.img_to_array(img_resized)
 
-# @app.post("/animal")
-# async def predict(
-#   file:UploadFile = File(...)
-#   ):
+@app.post("/animal")
+async def predict(
+  file:UploadFile = File(...)):
+  try:
+    imgarr = read_file_as_image(await file.read())
+    # if imgarr.shape != (256, 256, 3):
+    #     raise ValueError(f"Image shape is incorrect. Expected (256, 256, 3), but got {imgarr.shape}")
+    predictions = animalModel.predict(imgarr)
+    prediction_class = class_names[np.argmax(predictions[0])]
+    confidence = round(100*(np.max(predictions[0])), 2)
+    print("Prediction class - ", prediction_class)
+    print("Confidence - ", confidence)
+    return {"Prediction" : prediction_class,
+            "Confidence" : confidence}
+  except Exception as e:
+    return {"error": "Prediction failed", "details": str(e)}
 
 @app.post("/plant")
 async def predict(file:UploadFile = File(...)):
