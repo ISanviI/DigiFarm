@@ -6,8 +6,8 @@ function Disease() {
   const { type } = useParams();
   const [file, setFile] = useState(null);
   const fileRef = useRef(null);
-  const [predict_class, setClass] = useState("Result")
-  const [confidence, setConfidence] = useState("Accuracy")
+  const [predict_class, setClass] = useState("")
+  const [confidence, setConfidence] = useState("")
   const baseURL = "http://localhost:7000"
 
   const postFile = async (formData) => {
@@ -39,8 +39,8 @@ function Disease() {
     e.preventDefault();
     setFile(e.target.files[0]);
     if (!file) {
-      setClass("Result")
-      setConfidence("Accuracy")
+      setClass("")
+      setConfidence("")
     }
   };
   
@@ -63,14 +63,24 @@ function Disease() {
 
   return (
     <>
+
       <div id="classify"> <h2>{type.toUpperCase()} Disease Classification </h2></div>
       <div id="msg"> <h3>Upload your image file below to predict disease - 👇</h3></div>
+
       <form onSubmit={(e) => handleUpload(e)}>
-        <input type="file" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
-        <button type="submit" id="upload"> Upload </button>
-        <input type="text" value={predict_class} readOnly/>
-        <input type="text" value={confidence} readOnly/>
+        <div className="file-upload">
+          <input type="file" id="Pchoosefile" onChange={(e) => handleFileChange(e)} />
+          <button type="submit" id="upload"> Upload </button>
+        </div>
       </form>
+      
+      <div className="container">
+        <div>Predicted Disease</div>
+        <input type="text" value={predict_class} readOnly/>
+        <div>Accuracy</div>
+        <input type="text" value={confidence} readOnly/>
+      </div>
+      
     </>
   );
 }
