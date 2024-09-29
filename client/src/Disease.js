@@ -39,8 +39,8 @@ function Disease() {
     e.preventDefault();
     setFile(e.target.files[0]);
     if (!file) {
-      setClass("")
-      setConfidence("")
+      setClass(null)
+      setConfidence(null)
     }
   };
   
